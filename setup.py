@@ -30,6 +30,8 @@ setup(
     entry_points={
         'console_scripts': [
             'test_node = ias0220_idris_py.test_node:main',
+            'walker = ias0220_idris_py.random_walker:main',
+            'position_calculator = ias0220_idris_py.odometer:main',
         ],
     },
 
