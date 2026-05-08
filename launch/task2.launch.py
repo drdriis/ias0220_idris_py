@@ -1,20 +1,27 @@
 import os
+from typing import Any
+
+import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-import xacro
 
 package_name = "ias0220_idris_py"
+
 
 def generate_launch_description():
     package_path = os.path.join(get_package_share_directory(package_name))
 
     # Parse the urdf with xacro
     xacro_file = os.path.join(package_path, "urdf", "differential_robot.urdf")
-    doc = xacro.parse(open(xacro_file))
+
+    with open(xacro_file) as file:
+        doc: Any = xacro.parse(file)
+
     xacro.process_doc(doc)
-    params = {"robot_description": doc.toxml()} # pyright: ignore[reportAttributeAccessIssue]
+
+    params = {"robot_description": doc.toxml()}
 
     # Define launch arguments
     rvizconfig = LaunchConfiguration(
