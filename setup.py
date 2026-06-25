@@ -47,6 +47,7 @@ setup(
             'walker = ias0220_idris_py.random_walker:main',
             'position_calculator = ias0220_idris_py.odometer:main',
             'odometry = ias0220_idris_py.odometry:main',
+            'steering_node = ias0220_idris_py.steering_node:main',
         ],
     },
 
