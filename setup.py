@@ -1,6 +1,9 @@
-from setuptools import find_packages, setup
 import os
 from glob import glob
+
+from setuptools import find_packages, setup
+
+
 package_name = 'ias0220_idris_py'
 
 setup(
@@ -21,20 +24,19 @@ setup(
             glob('launch/*.launch.py'),
         ),
         (
-            os.path.join('share', package_name, 'urdf'),
-            glob('urdf/*.urdf'),
-        ),
-        (
             os.path.join('share', package_name, 'config'),
             glob('config/*.rviz'),
+        ),
+        (
+            os.path.join('share', package_name, 'data', 'images'),
+            glob('data/images/*'),
         ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='drdriis',
-
     maintainer_email='idrish@taltech.ee',
-    description='TODO: Package description',
+    description='Camera calibration assignment for IAS0220',
     license='TODO: License declaration',
     extras_require={
         'test': [
@@ -43,11 +45,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'test_node = ias0220_idris_py.test_node:main',
-            'walker = ias0220_idris_py.random_walker:main',
-            'position_calculator = ias0220_idris_py.odometer:main',
-            'odometry = ias0220_idris_py.odometry:main',
+            'image_publisher = ias0220_idris_py.image_publisher:main',
+            'camera_calibration = ias0220_idris_py.camera_calibration:main',
         ],
     },
-
 )

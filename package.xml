@@ -3,20 +3,29 @@
 <package format="3">
   <name>ias0220_idris_py</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Camera calibration assignment</description>
+
   <maintainer email="idrish@taltech.ee">drdriis</maintainer>
   <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
 
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>visualization_msgs</depend>
 
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>ament_index_python</depend>
+
+  <exec_depend>image_proc</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
-
 
   <export>
     <build_type>ament_python</build_type>
