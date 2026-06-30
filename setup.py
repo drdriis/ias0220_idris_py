@@ -31,6 +31,10 @@ setup(
             os.path.join('share', package_name, 'data', 'images'),
             glob('data/images/*'),
         ),
+        (
+            os.path.join('share', package_name, 'urdf'),
+            glob('urdf/*'),
+        ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -47,6 +51,7 @@ setup(
         'console_scripts': [
             'image_publisher = ias0220_idris_py.image_publisher:main',
             'camera_calibration = ias0220_idris_py.camera_calibration:main',
+            'object_recognition = ias0220_idris_py.object_recognition:main',
         ],
     },
 )
