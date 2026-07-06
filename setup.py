@@ -35,6 +35,10 @@ setup(
             os.path.join('share', package_name, 'urdf'),
             glob('urdf/*'),
         ),
+        (
+            os.path.join('share', package_name, 'config'),
+            glob('config/*.rviz') + glob('config/*.yaml'),
+        ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -49,9 +53,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'image_publisher = ias0220_idris_py.image_publisher:main',
-            'camera_calibration = ias0220_idris_py.camera_calibration:main',
-            'object_recognition = ias0220_idris_py.object_recognition:main',
+            'simple_control = ias0220_idris_py.simple_control:main',
         ],
     },
 )

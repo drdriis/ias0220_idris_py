@@ -13,7 +13,7 @@
   <xacro:property name="marker_origin" value="0 0 0.005" />
 
   <xacro:property name="head_size" value="0.015 0.015 0.03" />
-  <xacro:property name="head_origin" value="0.18 0 0.025" />
+  <xacro:property name="head_origin" value="0.125 0 0.025" />
 
   <xacro:property name="passive_holder_radius" value="0.010" />
   <xacro:property name="passive_holder_length" value="0.015" />
@@ -269,22 +269,31 @@
     <material>Gazebo/White</material>
   </gazebo>
 
+  <!-- Passive wheel: zero friction (must slide freely), stiff contact -->
   <gazebo reference="passive_wheel">
     <material>Gazebo/White</material>
+    <mu1>0.0</mu1>
+    <mu2>0.0</mu2>
+    <kp>100000.0</kp>
+    <kd>10000.0</kd>
   </gazebo>
 
-  <!-- Left wheel: non-zero friction (actuated) -->
+  <!-- Left wheel: non-zero friction (actuated), stiff contact -->
   <gazebo reference="left_wheel">
     <material>Gazebo/Black</material>
     <mu1>1.0</mu1>
     <mu2>1.0</mu2>
+    <kp>100000.0</kp>
+    <kd>10000.0</kd>
   </gazebo>
 
-  <!-- Right wheel: non-zero friction (actuated) -->
+  <!-- Right wheel: non-zero friction (actuated), stiff contact -->
   <gazebo reference="right_wheel">
     <material>Gazebo/Black</material>
     <mu1>1.0</mu1>
     <mu2>1.0</mu2>
+    <kp>100000.0</kp>
+    <kd>10000.0</kd>
   </gazebo>
 
   <gazebo reference="left_wheel_marker">
@@ -295,27 +304,76 @@
     <material>Gazebo/White</material>
   </gazebo>
 
-  <!-- ================= CAMERA ================= -->
-  <gazebo reference="head">
-    <sensor type="camera" name="camera1">
-      <update_rate>30.0</update_rate>
-      <camera name="head_camera">
-        <horizontal_fov>1.0</horizontal_fov>
-        <image>
-          <width>800</width>
-          <height>800</height>
-          <format>R8G8B8</format>
-        </image>
-        <clip>
-          <near>0.02</near>
-          <far>300</far>
-        </clip>
-      </camera>
-      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-        <camera_name>camera1</camera_name>
-        <frame_name>head</frame_name>
-      </plugin>
-    </sensor>
+
+  <!-- ================= GAZEBO DIFFERENTIAL DRIVE PLUGIN ================= -->
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+
+      <!-- Wheel joints -->
+      <left_joint>base_to_left_wheel</left_joint>
+      <right_joint>base_to_right_wheel</right_joint>
+
+      <!-- Wheel geometry — must match your model -->
+      <wheel_separation>0.350</wheel_separation>
+      <wheel_diameter>0.072</wheel_diameter>
+
+      <!-- Limits -->
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+      <!-- Command topic (input from controller) -->
+      <command_topic>cmd_vel</command_topic>
+
+      <!-- Odometry -->
+      <odometry_source>0</odometry_source>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+
+      <!-- Remap topics to match controller node -->
+      <ros>
+        <remapping>odom:=diff_cont/odom</remapping>
+        <remapping>cmd_vel:=diff_cont/cmd_vel</remapping>
+      </ros>
+
+      <!-- Publish rate -->
+      <publish_rate>50</publish_rate>
+      <publish_wheel_tf>true</publish_wheel_tf>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+
+      <update_rate>100</update_rate>
+
+    </plugin>
   </gazebo>
+
+
+  <!-- ================= GAZEBO GROUND TRUTH PLUGIN ================= -->
+  <gazebo>
+    <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+      <ros>
+        <remapping>odom:=ground_truth</remapping>
+      </ros>
+      <update_rate>50.0</update_rate>
+      <body_name>base_footprint</body_name>
+      <gaussian_noise>0.0</gaussian_noise>
+      <frame_name>odom</frame_name>
+      <xyz_offset>0 0 0</xyz_offset>
+      <rpy_offset>0 0 0</rpy_offset>
+    </plugin>
+  </gazebo>
+
+  <!-- Joint state publisher plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_joint_state_publisher"
+      filename="libgazebo_ros_joint_state_publisher.so">
+      <update_rate>50</update_rate>
+      <joint_name>base_to_left_wheel</joint_name>
+      <joint_name>base_to_right_wheel</joint_name>
+      <joint_name>left_wheel_to_marker</joint_name>
+      <joint_name>right_wheel_to_marker</joint_name>
+    </plugin>
+  </gazebo>
+
 
 </robot>
