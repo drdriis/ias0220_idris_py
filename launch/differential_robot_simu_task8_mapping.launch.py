@@ -13,10 +13,11 @@ def generate_launch_description():
     gazebo_pkg = get_package_share_directory('setup_gazebo_ias0220')
 
     urdf_file = os.path.join(
-        pkg, 'urdf', 'differntial_robot_task7.urdf')
+        pkg, 'urdf', 'differential_robot_task8.urdf')
     rviz_file = os.path.join(
-        pkg, 'config', 'differential_robot_rviz_task7.rviz')
+        pkg, 'config', 'differential_robot_rviz_task8.rviz')
     config = os.path.join(
+
         pkg, 'config', 'simple_control_v2.yaml')
 
     # ── 1. Gazebo + robot_state_publisher + spawn ──────────────────────────

@@ -314,8 +314,8 @@
       <right_joint>base_to_right_wheel</right_joint>
 
       <!-- Wheel geometry — must match your model -->
-      <wheel_separation>0.350</wheel_separation>
-      <wheel_diameter>0.072</wheel_diameter>
+      <wheel_separation>0.28</wheel_separation>
+      <wheel_diameter>0.06</wheel_diameter>
 
       <!-- Limits -->
       <max_wheel_torque>20</max_wheel_torque>
