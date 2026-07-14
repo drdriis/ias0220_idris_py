@@ -39,6 +39,10 @@ setup(
             os.path.join('share', package_name, 'config'),
             glob('config/*.rviz') + glob('config/*.yaml'),
         ),
+        (
+            os.path.join('share', package_name, 'map'),
+            glob('map/*'),
+        ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

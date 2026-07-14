@@ -8,6 +8,7 @@ from geometry_msgs.msg import Twist, PoseStamped, Point
 from visualization_msgs.msg import Marker
 from nav_msgs.msg import Odometry
 from tf_transformations import euler_from_quaternion
+from tf2_ros import Buffer, TransformListener
 
 
 class PDController(Node):
@@ -16,6 +17,10 @@ class PDController(Node):
 
         # Wait for run other nodes
         time.sleep(5)
+
+        # tf2: to obtain the robot pose in the map frame (SLAM-corrected)
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
 
         # variables for error change rate calculation
         self.start_time = self.get_clock().now()
@@ -28,7 +33,7 @@ class PDController(Node):
             Twist, '/diff_cont/cmd_vel', 10)
         self.pub_viz = self.create_publisher(Marker, "waypoints", 10)
 
-        self.marker_frame = "odom"
+        self.marker_frame = "map"
 
         self.vel_cmd_msg = Twist()
         self.vel_cmd = np.array([0.0, 0.0])
@@ -192,13 +197,17 @@ class PDController(Node):
         @result: update of relevant vehicle state variables
         """
 
-        self.pos[0] = odom_msg.pose.pose.position.x
-        self.pos[1] = odom_msg.pose.pose.position.y
-
-        orientation_q = odom_msg.pose.pose.orientation
-        orientation_list = [orientation_q.x,
-                            orientation_q.y, orientation_q.z, orientation_q.w]
-        self.theta = euler_from_quaternion(orientation_list)[2]
+        # Robot pose in the map frame (SLAM-corrected), instead of raw odom
+        try:
+            tf = self.tf_buffer.lookup_transform(
+                'map', 'base_footprint', rclpy.time.Time())
+            self.pos[0] = tf.transform.translation.x
+            self.pos[1] = tf.transform.translation.y
+            q = tf.transform.rotation
+            self.theta = euler_from_quaternion([q.x, q.y, q.z, q.w])[2]
+        except Exception:
+            # map->odom not yet available (SLAM starting up): skip this cycle
+            return
 
         now_odom_time = rclpy.time.Time.from_msg(odom_msg.header.stamp)
 

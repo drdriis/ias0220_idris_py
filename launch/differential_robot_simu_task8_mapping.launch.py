@@ -37,12 +37,19 @@ def generate_launch_description():
         output='screen'
     )
 
-    # ── 3. Static transform publisher: map -> odom ─────────────────────────
-    static_transform_publisher = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_transform_publisher',
-        arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
+    # ── 3. SLAM Toolbox: publishes map->odom, builds the map ──────────────────
+    slam = Node(
+        package='slam_toolbox',
+        executable='async_slam_toolbox_node',
+        name='slam_toolbox',
+        output='screen',
+        parameters=[{
+            'use_sim_time': True,
+            'odom_frame': 'odom',
+            'base_frame': 'base_footprint',
+            'map_frame': 'map',
+            'scan_topic': '/scan',
+        }]
     )
 
     # ── 4. PD controller node ──────────────────────────────────────────────
@@ -57,6 +64,6 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         rviz,
-        static_transform_publisher,
+        slam,
         controller_node,
     ])
